@@ -1,0 +1,410 @@
+{% comment %}
+  Hero Section - Clean and Error-Free
+  Features:
+  - Top announcement bar (blue background)
+  - Hero content with rating, headline, description, CTA
+  - Image/video media
+  - Bottom scrolling marquee (responsive layout)
+{% endcomment %}
+
+<style>
+  .hero-section-main * {
+    box-sizing: border-box;
+  }
+
+  .hero-section-main .announcement-scroll {
+    animation: announcement-run 15s linear infinite;
+  }
+
+  .hero-section-main .marquee-animation {
+    animation: marquee-slide 20s linear infinite;
+  }
+
+  @keyframes announcement-run {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+
+  @keyframes marquee-slide {
+    0% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .hero-section-main .desktop-only {
+      display: none !important;
+    }
+    .hero-section-main .hero-content {
+      flex-direction: column !important;
+      padding: 0 !important;
+    }
+    .hero-section-main .text-content {
+      padding: 40px 20px !important;
+      margin-right: 0 !important;
+      margin-bottom: 0 !important;
+    }
+    .hero-section-main .media-content {
+      min-height: 300px !important;
+      order: -1;
+    }
+    .hero-section-main .headline {
+      font-size: 24px !important;
+      line-height: 1.2 !important;
+    }
+    .hero-section-main .description {
+      font-size: 14px !important;
+    }
+    .hero-section-main .bottom-marquee-desktop {
+      display: none !important;
+    }
+  }
+
+  @media (min-width: 769px) {
+    .hero-section-main .mobile-only {
+      display: none !important;
+    }
+    .hero-section-main .bottom-marquee-mobile {
+      display: none !important;
+    }
+  }
+</style>
+
+<section class="hero-section-main">
+  <!-- Top Announcement Bar (Blue Background) -->
+  {% assign announcements = section.blocks | where: 'type', 'announcement_ticker' %}
+  {% if announcements.size > 0 %}
+    <div style="background: #0040AC; padding: 12px 0; overflow: hidden; white-space: nowrap;">
+      <div class="marquee-animation" style="display: inline-block;">
+        {% for announcement in announcements %}
+          <span style="color: white; font-size: 14px; font-weight: 600; margin-right: 60px; text-transform: uppercase; letter-spacing: 1px;">
+            {{ announcement.settings.text }}
+          </span>
+        {% endfor %}
+        {% for announcement in announcements %}
+          <span style="color: white; font-size: 14px; font-weight: 600; margin-right: 60px; text-transform: uppercase; letter-spacing: 1px;">
+            {{ announcement.settings.text }}
+          </span>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  <!-- Main Hero Content -->
+  <div
+    class="hero-content"
+    style="display: flex; align-items: stretch; min-height: 600px; background: white; padding: 0;"
+  >
+    <!-- Text Content -->
+    <div
+      class="text-content"
+      style="flex: 1; padding: 60px 50px; display: flex; flex-direction: column; justify-content: center; background: white;"
+    >
+      <!-- Rating Section -->
+      {% if section.settings.rating_text != blank or section.settings.review_count != blank %}
+        <div style="margin-bottom: 25px;">
+          {% if section.settings.rating_text != blank %}
+            <span style="color: #0040AC; font-size: 20px; letter-spacing: 2px;">
+              {{ section.settings.rating_text }}
+            </span>
+          {% endif %}
+          {% if section.settings.review_count != blank %}
+            <span style="color: #0040AC; font-size: 16px; margin-left: 10px; font-weight: 500;">
+              {{ section.settings.review_count }}
+            </span>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      <!-- Headline -->
+      {% if section.settings.headline != blank %}
+        <h1
+          class="headline"
+          style="font-size: 48px; line-height: 1.1; color: #0040AC; margin-bottom: 30px; font-weight: 700; max-width: 500px; text-transform: uppercase;"
+        >
+          {{ section.settings.headline }}
+        </h1>
+      {% endif %}
+
+      <!-- Description -->
+      {% if section.settings.description != blank %}
+        <div
+          class="description"
+          style="font-size: 18px; line-height: 1.5; color: #333; margin-bottom: 40px; max-width: 450px; font-weight: 400; text-transform: uppercase;"
+        >
+          {{ section.settings.description }}
+        </div>
+      {% endif %}
+
+      <!-- CTA Button -->
+      {% if section.settings.cta_label != blank %}
+        <div>
+          <a
+            href="{{ section.settings.cta_url | default: '#' }}"
+            style="display: inline-flex; align-items: center; gap: 12px; padding: 18px 35px; background: #0040AC; color: white; text-decoration: none; border-radius: 6px; font-size: 16px; font-weight: 700; transition: all 0.3s; text-transform: uppercase; letter-spacing: 1px;"
+          >
+            {{ section.settings.cta_label }}
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+              <path d="M10 0L8.59 1.41L12.17 5H0V7H12.17L8.59 10.59L10 12L16 6L10 0Z" fill="white"/>
+            </svg>
+          </a>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Media Content -->
+    <div class="media-content" style="flex: 1; position: relative; min-height: 500px; background: #f5f5f5;">
+      {% if section.settings.media_type == 'image' and section.settings.hero_image != blank %}
+        {{
+          section.settings.hero_image
+          | img_url: '800x600'
+          | img_tag: section.settings.hero_image.alt,
+            'position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; object-position: center;'
+        }}
+      {% elsif section.settings.media_type == 'video' and section.settings.video_url != blank %}
+        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+          {% assign video_url = section.settings.video_url %}
+          {% if video_url contains 'youtube.com/watch?v=' %}
+            {% assign video_id = video_url | split: 'v=' | last | split: '&' | first %}
+            <iframe
+              src="https://www.youtube.com/embed/{{ video_id }}"
+              width="100%"
+              height="100%"
+              frameborder="0"
+              allowfullscreen
+            >
+            </iframe>
+          {% elsif video_url contains 'youtu.be/' %}
+            {% assign video_id = video_url | split: 'youtu.be/' | last | split: '?' | first %}
+            <iframe
+              src="https://www.youtube.com/embed/{{ video_id }}"
+              width="100%"
+              height="100%"
+              frameborder="0"
+              allowfullscreen
+            >
+            </iframe>
+          {% elsif video_url contains 'vimeo.com/' %}
+            {% assign video_id = video_url | split: '/' | last %}
+            <iframe
+              src="https://player.vimeo.com/video/{{ video_id }}"
+              width="100%"
+              height="100%"
+              frameborder="0"
+              allowfullscreen
+            >
+            </iframe>
+          {% else %}
+            <video controls style="width: 100%; height: 100%; object-fit: cover;">
+              <source src="{{ video_url }}" type="video/mp4">
+            </video>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Bottom Marquee - Desktop Layout (like first image) -->
+  {% assign marquee_items = section.blocks | where: 'type', 'hero_section' %}
+  {% if marquee_items.size > 0 %}
+    <div
+      class="bottom-marquee-desktop"
+      style="background: #0040AC; padding: 15px 0; overflow: hidden; white-space: nowrap;"
+    >
+      <div class="marquee-animation" style="display: inline-block;">
+        {% for item in marquee_items %}
+          <span style="color: white; font-size: 18px; font-weight: 500; margin-right: 60px;">
+            {{ item.settings.text }}
+          </span>
+        {% endfor %}
+        {% for item in marquee_items %}
+          <span style="color: white; font-size: 18px; font-weight: 500; margin-right: 60px;">
+            {{ item.settings.text }}
+          </span>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Bottom Marquee - Mobile Layout (same as desktop) -->
+    <div
+      class="bottom-marquee-mobile"
+      style="background: #0040AC; padding: 15px 0; overflow: hidden; white-space: nowrap;"
+    >
+      <div class="marquee-animation" style="display: inline-block;">
+        {% for item in marquee_items %}
+          <span style="color: white; font-size: 16px; font-weight: 500; margin-right: 50px;">
+            {{ item.settings.text }}
+          </span>
+        {% endfor %}
+        {% for item in marquee_items %}
+          <span style="color: white; font-size: 16px; font-weight: 500; margin-right: 50px;">
+            {{ item.settings.text }}
+          </span>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+</section>
+
+{% schema %}
+{
+  "name": "Hero Section",
+  "class": "hero-section-wrapper",
+  "settings": [
+    {
+      "type": "text",
+      "id": "headline",
+      "label": "Headline",
+      "default": "If It's Not Greek Olive Oil, It's Just Salad Water"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>It's so pure, you can sip it, sizzle it, or slather it on your face.</p>"
+    },
+    {
+      "type": "select",
+      "id": "media_type",
+      "label": "Media Type",
+      "options": [
+        { "value": "image", "label": "Image" },
+        { "value": "video", "label": "Video" }
+      ],
+      "default": "image"
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image",
+      "label": "Hero Image"
+    },
+    {
+      "type": "url",
+      "id": "video_url",
+      "label": "Video URL"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Button Text",
+      "default": "GET OLIVE OIL"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Button Link"
+    },
+    {
+      "type": "text",
+      "id": "rating_text",
+      "label": "Rating Stars",
+      "default": "★★★★★"
+    },
+    {
+      "type": "text",
+      "id": "review_count",
+      "label": "Review Count",
+      "default": "6,548 Reviews"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "announcement_ticker",
+      "name": "Announcement",
+      "limit": 5,
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Announcement Text",
+          "default": "Customer Care 24/7"
+        }
+      ]
+    },
+    {
+      "type": "hero_section",
+      "name": "Marquee Item",
+      "limit": 10,
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Marquee Text",
+          "default": "PUT IT ON YOUR FACE"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Section",
+      "category": "Custom",
+      "settings": {
+        "headline": "If It's Not Greek Olive Oil, It's Just Salad Water",
+        "description": "<p>It's so pure, you can sip it, sizzle it, or slather it on your face.</p>",
+        "media_type": "image",
+        "cta_label": "GET OLIVE OIL",
+        "rating_text": "★★★★★",
+        "review_count": "6,548 Reviews"
+      },
+      "blocks": [
+        {
+          "type": "announcement_ticker",
+          "settings": {
+            "text": "FREE SHIPPING + 10% OFF THIS WEEKEND ONLY"
+          }
+        },
+        {
+          "type": "announcement_ticker",
+          "settings": {
+            "text": "Customer Care 24/7"
+          }
+        },
+        {
+          "type": "announcement_ticker",
+          "settings": {
+            "text": "100% Pure Greek Olive Oil"
+          }
+        },
+        {
+          "type": "hero_section",
+          "settings": {
+            "text": "PUT IT ON SALADS"
+          }
+        },
+        {
+          "type": "hero_section",
+          "settings": {
+            "text": "PUT IT ON VEGETABLES"
+          }
+        },
+        {
+          "type": "hero_section",
+          "settings": {
+            "text": "PUT IT ON PASTA"
+          }
+        },
+        {
+          "type": "hero_section",
+          "settings": {
+            "text": "PUT IT ON ICE CREAM"
+          }
+        },
+        {
+          "type": "hero_section",
+          "settings": {
+            "text": "PUT IT ON YOUR FACE"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
